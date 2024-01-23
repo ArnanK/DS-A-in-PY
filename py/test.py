@@ -1,2 +1,1 @@
-def test(x:int) -> None:
-    print(x)
+print(10//2)

@@ -1,15 +1,32 @@
-import http.client
+import requests
 
-conn = http.client.HTTPSConnection("api-football-v1.p.rapidapi.com")
+def get_weather(api_key, city):
+    base_url = "http://api.openweathermap.org/data/2.5/weather"
+    params = {
+        "q": city,
+        "appid": api_key,
+        "units": "metric"  # You can change this to "imperial" for Fahrenheit
+    }
 
-headers = {
-    'X-RapidAPI-Key': "SIGN-UP-FOR-KEY",
-    'X-RapidAPI-Host': "api-football-v1.p.rapidapi.com"
-}
+    try:
+        response = requests.get(base_url, params=params)
+        data = response.json()
 
-conn.request("GET", "/v3/teams/statistics?league=39&season=2020&team=33", headers=headers)
+        if response.status_code == 200:
+            weather_description = data['weather'][0]['description']
+            temperature = data['main']['temp']
+            humidity = data['main']['humidity']
 
-res = conn.getresponse()
-data = res.read()
+            return f"Weather in {city}: {weather_description}, Temperature: {temperature}°C, Humidity: {humidity}%"
+        else:
+            return f"Error: {data['message']}"
 
-print(data.decode("utf-8"))
+    except Exception as e:
+        return f"An error occurred: {e}"
+
+# Replace 'your_api_key' with your actual OpenWeatherMap API key
+api_key = '0b788c6011f6b4523f5c1b09ed0fe137'
+city = 'New York'
+
+result = get_weather(api_key, city)
+print(result)
